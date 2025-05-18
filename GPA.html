@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Degree Classification Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #dfe9f3, #ffffff);
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #0a74da;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #0a74da;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #084e8a;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #0a74da;
+      color: #fff;
+    }
+    #totalScore {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    #classification {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .first-class { background-color: #c6f6d5; color: #2f855a; }
+    .second-upper { background-color: #fefcbf; color: #b7791f; }
+    .second-lower { background-color: #fbd38d; color: #975a16; }
+    .third-class { background-color: #fbb6ce; color: #97266d; }
+    .fail { background-color: #fed7d7; color: #c53030; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Degree Classification Calculator</h2>
+    <label>Subject Name:</label>
+    <input type="text" id="subjectName" placeholder="e.g. Data Science" />
+
+    <label>Credit:</label>
+    <input type="number" id="credit" placeholder="e.g. 20" />
+
+    <label>Mark (%):</label>
+    <input type="number" id="mark" placeholder="e.g. 75" />
+
+    <button onclick="addSubject()">Add Subject</button>
+
+    <table id="subjectsTable">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Credit</th>
+          <th>Mark (%)</th>
+          <th>Weighted Score</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h3 id="totalScore"></h3>
+    <div id="classification"></div>
+  </div>
+
+  <script>
+    let totalWeightedScore = 0;
+    let totalCredits = 0;
+
+    function addSubject() {
+      const name = document.getElementById('subjectName').value;
+      const credit = parseFloat(document.getElementById('credit').value);
+      const mark = parseFloat(document.getElementById('mark').value);
+
+      if (!name || isNaN(credit) || isNaN(mark)) {
+        alert('Please enter all values correctly.');
+        return;
+      }
+
+      const weightedScore = credit * mark;
+      totalWeightedScore += weightedScore;
+      totalCredits += credit;
+
+      const table = document.getElementById('subjectsTable').getElementsByTagName('tbody')[0];
+      const newRow = table.insertRow();
+      newRow.innerHTML = `<td>${name}</td><td>${credit}</td><td>${mark}</td><td>${weightedScore.toFixed(2)}</td>`;
+
+      updateTotals();
+
+      document.getElementById('subjectName').value = '';
+      document.getElementById('credit').value = '';
+      document.getElementById('mark').value = '';
+    }
+
+    function updateTotals() {
+      const avg = totalWeightedScore / totalCredits;
+      document.getElementById('totalScore').innerText = `Total Weighted Score: ${totalWeightedScore.toFixed(2)} / ${totalCredits} Credits\n(Average: ${avg.toFixed(2)}%)`;
+
+      const classificationDiv = document.getElementById('classification');
+      let classification = 'Fail';
+      let className = 'fail';
+      if (avg >= 70) {
+        classification = 'First Class';
+        className = 'first-class';
+      } else if (avg >= 60) {
+        classification = 'Second Upper';
+        className = 'second-upper';
+      } else if (avg >= 50) {
+        classification = 'Second Lower';
+        className = 'second-lower';
+      } else if (avg >= 40) {
+        classification = 'Third Class';
+        className = 'third-class';
+      }
+
+      classificationDiv.className = className;
+      classificationDiv.innerText = `Classification: ${classification}`;
+    }
+  </script>
+</body>
+</html>
